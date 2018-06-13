@@ -1,7 +1,7 @@
 from django.conf.urls import url
-from api_views.TagViews import TagRUDView, TagCreateListView
-from api_views.ExpenseViews import ExpensesRUDView, ExpensesCreateListView
-from api_views.GeneralViews import GeneralViews
+from .api_views.TagViews import TagRUDView, TagCreateListView
+from .api_views.ExpenseViews import ExpensesRUDView, ExpensesCreateListView
+from .api_views.GeneralViews import GeneralViews
 
 urlpatterns = [
     url(r'^tags/$', TagCreateListView.as_view(), name='tags-listcreate'),
