@@ -7,6 +7,7 @@ from django.conf import settings
 
 class Tag(models.Model):
     tag_name = models.CharField(max_length=50)
+    tag_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.tag_name
