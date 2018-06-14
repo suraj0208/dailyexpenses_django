@@ -6,7 +6,7 @@ from expenses.models import Tag
 from expenses.api.api_serializers.ExpenseSerializers import ExpenseSerializer
 from rest_framework import generics
 from rest_framework.response import Response
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Sum
 from django.db.models.functions import TruncMonth
 from expenses.api.permissions import Permissions
 
@@ -14,13 +14,17 @@ from expenses.api.permissions import Permissions
 class ExpensesCreateListView(generics.mixins.CreateModelMixin, generics.ListAPIView):
     lookup_field = 'pk'
     serializer_class = ExpenseSerializer
-    permission_classes = [Permissions]
+    permission_classes = (Permissions,)
 
     def perform_create(self, serializer):
         serializer.save()
 
     def get_queryset(self):
         qs = Expense.objects.all()
+        accessible_ids = [expense.id for expense in qs if expense.has_permission(self.request.user)]
+
+        qs = qs.filter(Q(id__in=accessible_ids))
+
         query = self.request.GET.get("q")
 
         if query is not None:
@@ -33,9 +37,7 @@ class ExpensesCreateListView(generics.mixins.CreateModelMixin, generics.ListAPIV
                     qs = qs.filter(
                         Q(expense_date=splitTotal[0])
                     ).values('expense_date')
-                    print(qs)
                     qs = qs.annotate(total=Sum('expense_amount'))
-                    print(qs)
 
                     return qs[0] if len(qs) > 0 else {'total': 0}
 
