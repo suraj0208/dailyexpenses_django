@@ -1,6 +1,7 @@
 .py[cod]
 dailyexpenses/settings/local.py
 .idea/*
+dailyexpenses/.idea/*
 
 .DS_Store
 bin/
