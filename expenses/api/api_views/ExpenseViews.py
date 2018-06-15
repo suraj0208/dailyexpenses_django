@@ -108,7 +108,19 @@ class ExpensesCreateListView(generics.mixins.CreateModelMixin, generics.ListAPIV
             # ToDo
             print("unknown tag in request")
         else:
-            request.data['expense_tag'] = found_tag.id
+            request.data['expense_tag'] = found_tag
+
+        request.data['expense_owner'] = self.request.user
+
+        print(request.data['expense_tag'])
+
+        ret = Expense(**request.data)
+        print(type(ret))
+        ret.save()
+
+        if ret is not None:
+            return Response(status=201)
+
         return self.create(request, args, kwargs)
 
     def delete(self, request, *args, **kwargs):
